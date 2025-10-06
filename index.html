@@ -67,7 +67,7 @@
         @media(max-width:880px){ .community-content{ flex-direction:column } .header-content{ flex-direction:column; gap:12px } .mobile-menu{ display:block } nav{ display:none } .nav-menu.active{ display:block }
         }
 
-        /* Dark mode overrides (applies when .dark-mode on body) */
+        /* Dark mode overrides  */
         body.dark-mode{ background:#0f1622; color:#e6f0ff }
         body.dark-mode .feature-card, body.dark-mode .tool-card, body.dark-mode .resource-card{ background:#14202b; color:#e6f0ff }
         body.dark-mode header{ background:#071024 }
@@ -180,7 +180,7 @@
                 <div class="tool-card">
                     <h3><i class="fas fa-water"></i> Relaxing Sounds</h3>
                     <p>Play ocean waves to help you relax. Volume and loop controls included.</p>
-                    <!-- NOTE: Replace the src below with your preferred ocean waves MP3 if desired. -->
+                    
                     <audio id="relaxSound" loop preload="none">
                         <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_0d5f0b5a8a.mp3?filename=ocean-waves-11070.mp3" type="audio/mpeg">
                         Your browser does not support the audio element.
@@ -327,7 +327,7 @@
         pauseBreathingBtn.addEventListener('click', ()=>{ if(isPaused){ startBreathingExercise(); } else { stopBreathingExercise(); } });
         resetBreathingBtn.addEventListener('click', ()=>{ stopBreathingExercise(); breathingCircle.style.width='140px'; breathingCircle.style.height='140px'; breathingText.textContent='Breathe in slowly through your nose...'; });
 
-        // Also start exercise from Tools quick start
+        
         document.getElementById('startBreathing').addEventListener('click', ()=>{ breathingModal.style.display='flex'; breathingModal.setAttribute('aria-hidden','false'); startBreathingExercise(); });
 
         // ----------------------- Toast (wellness reminder & small messages) -----------------------
@@ -336,23 +336,22 @@
 
         // Wellness reminder after a period of browsing (non-intrusive)
         let reminderDelay = 3 * 60 * 1000; // 3 minutes default
-        // only show once per session
+       
         if(!sessionStorage.getItem('reminderShown')){
             setTimeout(()=>{ showToast('🌿 Take a brief stretch and breathe for 60 seconds.'); sessionStorage.setItem('reminderShown','true'); }, reminderDelay);
         }
 
-        // ----------------------- Smooth scrolling for anchors (keep existing behavior) -----------------------
         document.querySelectorAll('a[href^="#"]').forEach(anchor=>{ anchor.addEventListener('click', function(e){ const href = this.getAttribute('href'); if(href === '#') return; e.preventDefault(); const el = document.querySelector(href); if(el){ window.scrollTo({ top: el.offsetTop - 72, behavior: 'smooth' }); document.querySelector('.nav-menu').classList.remove('active'); } }); });
 
-        // ----------------------- Helper: audio fallback note -----------------------
-        // If the default ocean audio doesn't load or you prefer another clip, replace the <source> src attribute with your own MP3 URL.
+        
 
-        // Accessibility: close modal on Escape
+        
         window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape'){ if(breathingModal.style.display === 'flex'){ breathingModal.style.display='none'; stopBreathingExercise(); }} });
 
-        // Save initial random affirmation on load
+  
         document.addEventListener('DOMContentLoaded', ()=>{ showRandomAffirmation(); });
 
     </script>
 </body>
 </html>
+
