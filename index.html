@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serenity Space | Mental Health & Wellness</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin:0; padding:0; }
+        :root{
+            --primary:#4a6fa5; --secondary:#6b8cbc; --accent:#6bc5ff; --light:#f0f7ff; --dark:#1a1a2e; --success:#4fc3a1; --warning:#ffd56b; --danger:#ff6b6b;
+        }
+        body{ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:var(--light); color:#222; line-height:1.6; }
+        .container{ max-width:1200px; margin:0 auto; padding:0 20px; }
+        header{ background:linear-gradient(135deg,var(--primary) 0%, var(--secondary) 100%); color:#fff; padding:18px 0; box-shadow:0 4px 12px rgba(0,0,0,.08); }
+        .header-content{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+        .logo{ display:flex; align-items:center; gap:12px; }
+        .logo i{ font-size:2rem }
+        .logo h1{ font-size:1.6rem; font-weight:700 }
+        nav ul{ display:flex; list-style:none; gap:20px; align-items:center; }
+        nav a{ color:#fff; text-decoration:none; padding:8px 10px; border-radius:6px; font-weight:600 }
+        .mobile-menu{ display:none; font-size:1.2rem; cursor:pointer }
+
+        /* Hero with animated gradient */
+        .hero{ background:linear-gradient(rgba(26,26,46,.65), rgba(26,26,46,.65)), linear-gradient(-45deg,#4a6fa5,#6bc5ff,#4fc3a1,#6b8cbc); background-size:400% 400%; animation:gradientShift 14s ease infinite; color:#fff; padding:90px 0; text-align:center; }
+        @keyframes gradientShift{ 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+        .hero h2{ font-size:2.6rem; margin-bottom:12px }
+        .hero p{ font-size:1.05rem; max-width:760px; margin:0 auto 20px }
+        .btn{ display:inline-block; background:var(--accent); color:#fff; padding:10px 22px; border-radius:30px; text-decoration:none; font-weight:700; cursor:pointer; border:none }
+        .btn-outline{ background:transparent; border:2px solid rgba(255,255,255,.2); }
+
+        .features,.resources,.tools,.community{ padding:60px 0 }
+        .section-title{ text-align:center; margin-bottom:36px }
+        .section-title h2{ color:var(--primary); font-size:2rem }
+        .features-grid,.resources-grid,.tools-grid{ display:grid; gap:20px; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); }
+        .feature-card,.resource-card,.tool-card{ background:#fff; border-radius:12px; padding:20px; box-shadow:0 6px 18px rgba(0,0,0,.06); transition:transform .25s, box-shadow .25s }
+        .feature-card:hover,.resource-card:hover,.tool-card:hover{ transform:translateY(-6px); box-shadow:0 14px 30px rgba(0,0,0,.09) }
+        .feature-icon{ width:64px; height:64px; border-radius:50%; background:var(--light); display:flex; align-items:center; justify-content:center; margin:0 auto 12px; color:var(--primary); font-size:1.6rem }
+
+        /* Crisis */
+        .crisis{ background:linear-gradient(135deg,var(--primary),var(--secondary)); color:#fff; padding:48px 0; text-align:center }
+        .hotline{ background: rgba(255,255,255,.12); padding:16px; border-radius:10px; display:inline-block }
+        .hotline-number{ font-size:2rem; font-weight:800; color:var(--warning) }
+
+        /* Community */
+        .community-content{ display:flex; gap:20px; align-items:center }
+        .community-visual{ flex:1; background:var(--primary); border-radius:12px; height:220px; display:flex; align-items:center; justify-content:center; color:#fff }
+
+        /* Footer */
+        footer{ background:var(--dark); color:#fff; padding:40px 0 }
+        .footer-content{ display:grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap:24px }
+        .footer-column h3{ color:var(--accent) }
+
+        /* Modal & breathing */
+        .modal{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:1000; align-items:center; justify-content:center }
+        .modal-content{ background:#fff; border-radius:12px; padding:22px; width:92%; max-width:520px; text-align:center; position:relative }
+        .close-modal{ position:absolute; right:14px; top:10px; font-size:1.3rem; cursor:pointer }
+        .breathing-circle{ width:140px; height:140px; background:var(--primary); border-radius:50%; margin:18px auto; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; transition: all 1.6s ease-in-out }
+
+        /* Mood options */
+        .mood-options{ font-size:1.8rem; display:flex; gap:10px; justify-content:center; align-items:center; cursor:pointer }
+
+        /* Tiny toast */
+        .toast{ position:fixed; right:20px; bottom:20px; background:rgba(0,0,0,.85); color:#fff; padding:12px 16px; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,.3); display:none; z-index:2000 }
+
+        /* Responsive */
+        @media(max-width:880px){ .community-content{ flex-direction:column } .header-content{ flex-direction:column; gap:12px } .mobile-menu{ display:block } nav{ display:none } .nav-menu.active{ display:block }
+        }
+
+        /* Dark mode overrides (applies when .dark-mode on body) */
+        body.dark-mode{ background:#0f1622; color:#e6f0ff }
+        body.dark-mode .feature-card, body.dark-mode .tool-card, body.dark-mode .resource-card{ background:#14202b; color:#e6f0ff }
+        body.dark-mode header{ background:#071024 }
+        body.dark-mode footer{ background:#07101a }
+
+        /* small accessibility focus states */
+        a:focus, button:focus{ outline:3px solid rgba(107,140,188,.25); outline-offset:2px }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo"><i class="fas fa-brain" aria-hidden="true"></i><h1>Serenity Space</h1></div>
+                <div style="display:flex; align-items:center; gap:10px">
+                    <button id="themeToggle" class="btn btn-outline" aria-pressed="false">Dark Mode</button>
+                    <div class="mobile-menu" aria-hidden="false"><i class="fas fa-bars"></i></div>
+                </div>
+                <nav class="nav-menu" aria-label="Main navigation">
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#resources">Resources</a></li>
+                        <li><a href="#tools">Tools</a></li>
+                        <li><a href="#community">Community</a></li>
+                        <li><a href="#crisis">Crisis Help</a></li>
+                        <li><a href="#" class="btn btn-outline">Get Support</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero" id="home">
+        <div class="container">
+            <h2>Your Journey to Mental Wellness Starts Here</h2>
+            <p>Find resources, tools, and a supportive community to help you navigate your mental health journey with compassion and understanding.</p>
+            <a href="#resources" class="btn">Explore Resources</a>
+            <a href="#tools" class="btn btn-outline">Try Our Tools</a>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <div class="section-title"><h2>How We Can Help</h2><p>Comprehensive mental health support tailored to your needs</p></div>
+            <div class="features-grid">
+                <div class="feature-card"><div class="feature-icon"><i class="fas fa-book-open"></i></div><h3>Educational Resources</h3><p>Learn about mental health conditions, treatments, and coping strategies through our extensive library of articles and guides.</p></div>
+                <div class="feature-card"><div class="feature-icon"><i class="fas fa-tools"></i></div><h3>Interactive Tools</h3><p>Access mindfulness exercises, mood trackers, and other digital tools to support your mental wellness journey.</p></div>
+                <div class="feature-card"><div class="feature-icon"><i class="fas fa-users"></i></div><h3>Support Community</h3><p>Connect with others who understand what you're going through in our safe, moderated online community.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="resources" id="resources">
+        <div class="container">
+            <div class="section-title"><h2>Mental Health Resources</h2><p>Evidence-based information to help you understand and manage your mental health</p></div>
+            <div class="resources-grid">
+                <div class="resource-card"><div class="resource-img" style="height:140px; background:#4a6fa5; border-radius:8px"></div><div class="resource-content"><h3>Understanding Anxiety</h3><p>Learn about anxiety disorders, symptoms, and evidence-based treatment options.</p><a class="btn" href="#">Read More</a></div></div>
+                <div class="resource-card"><div class="resource-img" style="height:140px; background:#6b8cbc; border-radius:8px"></div><div class="resource-content"><h3>Depression Guide</h3><p>Comprehensive information on depression, its causes, and pathways to recovery.</p><a class="btn" href="#">Read More</a></div></div>
+                <div class="resource-card"><div class="resource-img" style="height:140px; background:#6bc5ff; border-radius:8px"></div><div class="resource-content"><h3>Mindfulness Practices</h3><p>Discover how mindfulness can help reduce stress and improve mental wellbeing.</p><a class="btn" href="#">Read More</a></div></div>
+                <div class="resource-card"><div class="resource-img" style="height:140px; background:#4fc3a1; border-radius:8px"></div><div class="resource-content"><h3>Coping Strategies</h3><p>Practical techniques to manage difficult emotions and challenging situations.</p><a class="btn" href="#">Read More</a></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="crisis" id="crisis">
+        <div class="container"><div class="crisis-content"><h2>Immediate Crisis Support</h2><p>If you're in crisis or experiencing thoughts of suicide, help is available right now</p><div class="hotline"><p>National Suicide Prevention Lifeline</p><div class="hotline-number">988</div><p>Available 24/7 • Free • Confidential</p></div><p>You can also text "HOME" to 741741 to connect with a crisis counselor</p></div></div>
+    </section>
+
+    <section class="tools" id="tools">
+        <div class="container">
+            <div class="section-title"><h2>Wellness Tools</h2><p>Interactive resources to support your mental health journey</p></div>
+            <div class="tools-grid">
+
+                <!-- Breathing Exercise (improved) -->
+                <div class="tool-card">
+                    <h3><i class="fas fa-wind"></i> Breathing Exercise</h3>
+                    <p>Use this guided breathing tool to calm your nervous system and reduce anxiety.</p>
+                    <button class="btn" id="startBreathing">Start Exercise</button>
+                    <button class="btn btn-outline" id="openBreathingModal">Open Guided</button>
+                </div>
+
+                <!-- Mood Tracker with storage & history -->
+                <div class="tool-card">
+                    <h3><i class="fas fa-feather-alt"></i> Mood Tracker</h3>
+                    <p>Track your mood quickly — saved locally on your device.</p>
+                    <div id="moodOptions" class="mood-options" aria-label="Mood options" role="list">
+                        <button class="mood-btn" data-mood="😊" aria-label="Happy">😊</button>
+                        <button class="mood-btn" data-mood="😐" aria-label="Neutral">😐</button>
+                        <button class="mood-btn" data-mood="😢" aria-label="Sad">😢</button>
+                        <button class="mood-btn" data-mood="😡" aria-label="Angry">😡</button>
+                        <button class="mood-btn" data-mood="😴" aria-label="Tired">😴</button>
+                        <button class="mood-btn" data-mood="😍" aria-label="Loved">😍</button>
+                    </div>
+                    <p id="moodMessage" style="margin-top:10px; text-align:center"></p>
+                    <div style="margin-top:12px; text-align:center"><button class="btn btn-outline" id="viewMoodHistory">View Mood History</button></div>
+                </div>
+
+                <!-- Gratitude / Affirmation -->
+                <div class="tool-card">
+                    <h3><i class="fas fa-journal-whills"></i> Daily Affirmation</h3>
+                    <p id="affirmationText">"You are stronger than you think."</p>
+                    <div style="display:flex; gap:10px; justify-content:center; margin-top:12px">
+                        <button class="btn" id="newAffirmation">New Affirmation</button>
+                        <button class="btn btn-outline" id="saveAffirmation">Save</button>
+                    </div>
+                    <p id="affirmSavedMsg" style="text-align:center; margin-top:8px; color:var(--success)"></p>
+                </div>
+
+                <!-- Relaxing Sounds (ocean waves) -->
+                <div class="tool-card">
+                    <h3><i class="fas fa-water"></i> Relaxing Sounds</h3>
+                    <p>Play ocean waves to help you relax. Volume and loop controls included.</p>
+                    <!-- NOTE: Replace the src below with your preferred ocean waves MP3 if desired. -->
+                    <audio id="relaxSound" loop preload="none">
+                        <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_0d5f0b5a8a.mp3?filename=ocean-waves-11070.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                    <div style="display:flex; gap:8px; justify-content:center; margin-top:12px; align-items:center">
+                        <button class="btn" id="playSound">Play</button>
+                        <button class="btn btn-outline" id="stopSound">Stop</button>
+                        <label style="display:flex; align-items:center; gap:6px"><i class="fas fa-volume-up"></i><input id="volume" type="range" min="0" max="1" step="0.05" value="0.6"></label>
+                    </div>
+                    <p style="font-size:0.9rem; color:#666; text-align:center; margin-top:8px">Tip: Many browsers require a user gesture to start audio.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="community" id="community">
+        <div class="container">
+            <div class="community-content">
+                <div class="community-text"><h2>You're Not Alone</h2><p>Join our supportive community where you can share experiences, find understanding, and connect with others on similar journeys.</p><p>Our moderated forums ensure a safe, respectful environment for everyone.</p><a href="#" class="btn">Join Our Community</a></div>
+                <div class="community-visual"><div><i class="fas fa-hands-helping" style="font-size:2rem"></i><p>Supportive Community</p></div></div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column"><h3>Serenity Space</h3><p>Providing compassionate mental health resources and support for everyone.</p><div style="margin-top:8px"><a class="social" href="#"><i class="fab fa-facebook-f"></i></a> <a class="social" href="#"><i class="fab fa-twitter"></i></a> <a class="social" href="#"><i class="fab fa-instagram"></i></a></div></div>
+                <div class="footer-column"><h3>Quick Links</h3><ul style="list-style:none; padding-left:0"><li><a href="#home">Home</a></li><li><a href="#resources">Resources</a></li><li><a href="#tools">Tools</a></li></ul></div>
+                <div class="footer-column"><h3>Resources</h3><ul style="list-style:none; padding-left:0"><li><a href="#">Anxiety Resources</a></li><li><a href="#">Mindfulness Guides</a></li></ul></div>
+                <div class="footer-column"><h3>Contact</h3><ul style="list-style:none; padding-left:0"><li><a href="mailto:help@serenityspace.com">help@serenityspace.com</a></li></ul></div>
+            </div>
+            <div style="text-align:center; margin-top:18px; color:#cbd6ea">&copy; 2023 Serenity Space. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <!-- Breathing Modal -->
+    <div class="modal" id="breathingModal" aria-hidden="true" role="dialog" aria-label="Breathing exercise">
+        <div class="modal-content">
+            <button class="close-modal" aria-label="Close">&times;</button>
+            <h2>Calming Breathing Exercise</h2>
+            <p>Follow the circle as it expands and contracts. Breathe in as it grows, and out as it shrinks.</p>
+            <div class="breathing-circle" id="breathingCircle">Breathe In</div>
+            <p id="breathingText">Breathe in slowly through your nose...</p>
+            <div style="display:flex; gap:8px; justify-content:center; margin-top:12px">
+                <button class="btn" id="pauseBreathing">Pause</button>
+                <button class="btn btn-outline" id="resetBreathing">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tiny toast for reminders & messages -->
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+        // Mobile Menu Toggle
+        document.querySelector('.mobile-menu').addEventListener('click', function(){ document.querySelector('.nav-menu').classList.toggle('active'); });
+
+        // ----------------------- Dark Mode (persisted) -----------------------
+        const themeToggle = document.getElementById('themeToggle');
+        const savedTheme = localStorage.getItem('serenity-theme');
+        if(savedTheme === 'dark'){ document.body.classList.add('dark-mode'); themeToggle.textContent = 'Light Mode'; themeToggle.setAttribute('aria-pressed','true'); }
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            themeToggle.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+            themeToggle.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+            localStorage.setItem('serenity-theme', isDark ? 'dark' : 'light');
+        });
+
+        // ----------------------- Affirmations -----------------------
+        const affirmations = [
+            "You are enough just as you are.",
+            "Progress, not perfection.",
+            "Peace begins with a deep breath.",
+            "You deserve rest and kindness.",
+            "Your feelings are valid.",
+            "Healing is not linear, and that's okay.",
+            "Small steps are still steps."
+        ];
+        const affirmationText = document.getElementById('affirmationText');
+        const newAffirmationBtn = document.getElementById('newAffirmation');
+        const saveAffirmationBtn = document.getElementById('saveAffirmation');
+        const affirmSavedMsg = document.getElementById('affirmSavedMsg');
+
+        function showRandomAffirmation(){ const a = affirmations[Math.floor(Math.random()*affirmations.length)]; affirmationText.textContent = '"'+a+'"'; }
+        newAffirmationBtn.addEventListener('click', ()=>{ showRandomAffirmation(); affirmSavedMsg.textContent=''; });
+        saveAffirmationBtn.addEventListener('click', ()=>{
+            const current = affirmationText.textContent;
+            let saved = JSON.parse(localStorage.getItem('savedAffirmations')||'[]');
+            if(!saved.includes(current)){ saved.push(current); localStorage.setItem('savedAffirmations', JSON.stringify(saved)); affirmSavedMsg.textContent = 'Saved to your device.'; }
+            else { affirmSavedMsg.textContent = 'Already saved.' }
+            setTimeout(()=>{ affirmSavedMsg.textContent=''; }, 2500);
+        });
+
+        // ----------------------- Relaxing Sounds (ocean) -----------------------
+        const relaxSound = document.getElementById('relaxSound');
+        const playSoundBtn = document.getElementById('playSound');
+        const stopSoundBtn = document.getElementById('stopSound');
+        const volume = document.getElementById('volume');
+        relaxSound.volume = parseFloat(volume.value);
+        playSoundBtn.addEventListener('click', ()=>{
+            relaxSound.play().then(()=>{ playSoundBtn.textContent='Pause'; }).catch(()=>{ showToast('Audio blocked — tap Play to enable sound.'); });
+        });
+        stopSoundBtn.addEventListener('click', ()=>{ relaxSound.pause(); relaxSound.currentTime = 0; playSoundBtn.textContent='Play'; });
+        playSoundBtn.addEventListener('click', ()=>{ if(!relaxSound.paused){ relaxSound.pause(); playSoundBtn.textContent='Play'; } else { relaxSound.play(); playSoundBtn.textContent='Pause'; } });
+        volume.addEventListener('input', ()=>{ relaxSound.volume = parseFloat(volume.value); });
+
+        // ----------------------- Mood Tracker -----------------------
+        const moodBtns = document.querySelectorAll('.mood-btn');
+        const moodMessage = document.getElementById('moodMessage');
+        const viewMoodHistory = document.getElementById('viewMoodHistory');
+        function saveMood(mood){ const now = new Date().toISOString(); let moods = JSON.parse(localStorage.getItem('moodHistory')||'[]'); moods.unshift({mood, time: now}); localStorage.setItem('moodHistory', JSON.stringify(moods)); }
+        moodBtns.forEach(btn=>{ btn.addEventListener('click', ()=>{ const m = btn.dataset.mood; saveMood(m); moodMessage.textContent = 'Mood saved: ' + m; setTimeout(()=>{ moodMessage.textContent=''; }, 2500); }); });
+        viewMoodHistory.addEventListener('click', ()=>{
+            const moods = JSON.parse(localStorage.getItem('moodHistory')||'[]');
+            if(!moods.length) return showToast('No mood history yet.');
+            // small popup with history
+            const list = moods.slice(0,10).map(it=>`${it.mood} — ${new Date(it.time).toLocaleString()}`).join('\n');
+            alert('Recent moods:\n\n' + list);
+        });
+
+        // ----------------------- Breathing Exercise (modal + animation) -----------------------
+        const breathingModal = document.getElementById('breathingModal');
+        const openBreathingModal = document.getElementById('openBreathingModal');
+        const closeModalBtn = document.querySelector('.close-modal');
+        const breathingCircle = document.getElementById('breathingCircle');
+        const breathingText = document.getElementById('breathingText');
+        const pauseBreathingBtn = document.getElementById('pauseBreathing');
+        const resetBreathingBtn = document.getElementById('resetBreathing');
+
+        let breathingInterval, isPaused=false;
+        openBreathingModal.addEventListener('click', ()=>{ breathingModal.style.display='flex'; breathingModal.setAttribute('aria-hidden','false'); startBreathingExercise(); });
+        closeModalBtn.addEventListener('click', ()=>{ breathingModal.style.display='none'; breathingModal.setAttribute('aria-hidden','true'); stopBreathingExercise(); });
+
+        function startBreathingExercise(){ let size=140; let inhale=true; stopBreathingExercise(); breathingInterval = setInterval(()=>{
+            if(inhale){ size += 6; if(size >= 220){ inhale=false; breathingText.textContent='Hold...'; setTimeout(()=>{ breathingText.textContent='Breathe out slowly through your mouth...'; }, 1600); }
+            } else { size -= 6; if(size <= 140){ inhale=true; breathingText.textContent='Breathe in slowly through your nose...'; }
+            }
+            breathingCircle.style.width = size+'px'; breathingCircle.style.height = size+'px';
+        }, 300); isPaused = false; pauseBreathingBtn.textContent='Pause'; }
+        function stopBreathingExercise(){ clearInterval(breathingInterval); isPaused=true; pauseBreathingBtn.textContent='Resume'; }
+        pauseBreathingBtn.addEventListener('click', ()=>{ if(isPaused){ startBreathingExercise(); } else { stopBreathingExercise(); } });
+        resetBreathingBtn.addEventListener('click', ()=>{ stopBreathingExercise(); breathingCircle.style.width='140px'; breathingCircle.style.height='140px'; breathingText.textContent='Breathe in slowly through your nose...'; });
+
+        // Also start exercise from Tools quick start
+        document.getElementById('startBreathing').addEventListener('click', ()=>{ breathingModal.style.display='flex'; breathingModal.setAttribute('aria-hidden','false'); startBreathingExercise(); });
+
+        // ----------------------- Toast (wellness reminder & small messages) -----------------------
+        const toast = document.getElementById('toast'); let toastTimer;
+        function showToast(msg, ms=3800){ clearTimeout(toastTimer); toast.textContent = msg; toast.style.display='block'; toastTimer = setTimeout(()=>{ toast.style.display='none'; }, ms); }
+
+        // Wellness reminder after a period of browsing (non-intrusive)
+        let reminderDelay = 3 * 60 * 1000; // 3 minutes default
+        // only show once per session
+        if(!sessionStorage.getItem('reminderShown')){
+            setTimeout(()=>{ showToast('🌿 Take a brief stretch and breathe for 60 seconds.'); sessionStorage.setItem('reminderShown','true'); }, reminderDelay);
+        }
+
+        // ----------------------- Smooth scrolling for anchors (keep existing behavior) -----------------------
+        document.querySelectorAll('a[href^="#"]').forEach(anchor=>{ anchor.addEventListener('click', function(e){ const href = this.getAttribute('href'); if(href === '#') return; e.preventDefault(); const el = document.querySelector(href); if(el){ window.scrollTo({ top: el.offsetTop - 72, behavior: 'smooth' }); document.querySelector('.nav-menu').classList.remove('active'); } }); });
+
+        // ----------------------- Helper: audio fallback note -----------------------
+        // If the default ocean audio doesn't load or you prefer another clip, replace the <source> src attribute with your own MP3 URL.
+
+        // Accessibility: close modal on Escape
+        window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape'){ if(breathingModal.style.display === 'flex'){ breathingModal.style.display='none'; stopBreathingExercise(); }} });
+
+        // Save initial random affirmation on load
+        document.addEventListener('DOMContentLoaded', ()=>{ showRandomAffirmation(); });
+
+    </script>
+</body>
+</html>
